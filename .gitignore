@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+# VS-Code files
+*.code-workspace
+
 # Compiled Object files
 *.slo
 *.lo
