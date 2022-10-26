@@ -10,6 +10,23 @@
 #define legere <<
 #define accipere >>
 
+/** ---- TODO: -----
+ * > Implement SSL hash into code
+ * > Compare combined string to one stored in vector
+ * > Set auth to correct Boolean value
+ * 
+ * > Avoid attempts system as we are not marked on it anyway
+ * > Reasearch HEX Strings in C++ to potentially reduce ';' & ','
+ * 
+ *  ---- IDEA: -----
+ * > Potentially make a hash table that works with the vector.
+ * > Would end up with O(1) time for search and O(n) -> O(n^2) time for hash algorithm
+ * 
+ * JUMP: Line 78
+ *
+*/
+
+
 // Display simple login prompt
 inline void displayLoginScreen(std::string &username, std::string &pswd) {
 
@@ -61,12 +78,9 @@ class Hash {
       }
       file.close();
 
-
       // Do hashing here!
 
 
-      // After hash combine username and password together with ':'
-      // Compare combined string to item in vector
     }
 
     // Deconstructor
