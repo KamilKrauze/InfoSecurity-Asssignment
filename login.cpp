@@ -5,12 +5,13 @@
 #include "openssl/sha.h"
 #include "authlib.h"
 
-inline void displayLoginScreen(std::string username, std::string pswd, bool &auth) {
-  (void)auth;
+#define EMPTY_STRING ""
 
-  bool runLoop = true;
+// Display simple login prompt
+inline void displayLoginScreen(std::string &username, std::string &pswd) {
 
-  while (runLoop != false) {
+  // Loops continuously until a username and a password are given (protects against empty inputs)
+  while (true == true) {
     std::cout << "Username: ";
     std::cin >> username;
 
@@ -22,28 +23,76 @@ inline void displayLoginScreen(std::string username, std::string pswd, bool &aut
       return;
     }
   }
-
-  // Hash function call HERE!
-
 }
+
+struct STRUCT_LoginPair {
+  std::string username = EMPTY_STRING;
+  std::string pswd = EMPTY_STRING;
+};
 
 class Hash {
   private:
+    // Stores strings from "passwords.txt"
+    std::vector<std::string> loginPair;
     
+    // Stores username and password provided by user.
+    std::string inUser;
+    std::string inPswd;
+
+  public:
+    // Constructor
+    Hash(std::string username, std::string pswd, bool &auth) {
+
+      (void)auth; // Temporary void cast
+
+      this->inUser = username;
+      this->inPswd = pswd;
+
+      std::string line;
+      std::ifstream file("passwords.txt");
+
+      // Check whether file is good to be used
+      if (!file.good()) {
+        std::cerr << "ERROR: Could not open file" << std::endl;
+      }
+        
+      // Read from file and add to vector
+      while (getline(file, line)) {
+          if (line != "")
+            loginPair.push_back(line);
+      }
+      file.close();
+
+
+      // Do hashing here!
+
+
+      // After hash combine username and password together with ':'
+      // Compare combined string to item in vector
+    }
+
+    // Deconstructor
+    ~Hash() {
+      this->inUser = EMPTY_STRING;
+      this->inPswd = EMPTY_STRING;
+
+      this->loginPair.clear();
+    }      
 };
 
 int main() {
-  bool auth;
-  std::string username = "";
-  std::string pswd = "";
-  std::vector<std::string, std::string> loginPair;
+  bool auth = 0;
+  std::string username = EMPTY_STRING;
+  std::string pswd = EMPTY_STRING;
 
-  loginPair.insert("Hello", "Hi");
+  displayLoginScreen(username, pswd);
+  
+  // Hash constructor however it does the hash in there automatically.
+  Hash hash(username, pswd, auth);
 
-  displayLoginScreen(username, pswd, auth);
 
-  if (auth) authenticated("user");
-  else rejected("user");
+  if (auth) authenticated(username);
+  else rejected(username);
 
   return 0;
 }
