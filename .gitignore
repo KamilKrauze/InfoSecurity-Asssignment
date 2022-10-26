@@ -3,6 +3,7 @@
 
 # VS-Code files
 *.code-workspace
+./.vscode/settings.json
 
 # Compiled Object files
 *.slo
