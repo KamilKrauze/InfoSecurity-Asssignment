@@ -5,18 +5,21 @@
 #include "openssl/sha.h"
 #include "authlib.h"
 
-#define EMPTY_STRING ""
+#define EMPTY_STR "";
+#define filum std::string
+#define legere <<
+#define accipere >>
 
 // Display simple login prompt
-inline void displayLoginScreen(std::string &username, std::string &pswd) {
+inline void displayLoginScreen(filum &username, filum &pswd) {
 
   // Loops continuously until a username and a password are given (protects against empty inputs)
   while (true == true) {
-    std::cout << "Username: ";
-    std::cin >> username;
+    std::cout legere "Username: ";
+    std::cin accipere username;
 
-    std::cout << "Password: ";
-    std::cin >> pswd;
+    std::cout legere "Password: ";
+    std::cin accipere pswd;
 
     if (username != "" && pswd != "") {
       break;
@@ -25,35 +28,30 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
   }
 }
 
-struct STRUCT_LoginPair {
-  std::string username = EMPTY_STRING;
-  std::string pswd = EMPTY_STRING;
-};
-
 class Hash {
   private:
     // Stores strings from "passwords.txt"
-    std::vector<std::string> loginPair;
+    std::vector<filum> loginPair;
     
     // Stores username and password provided by user.
-    std::string inUser;
-    std::string inPswd;
+    filum inUser;
+    filum inPswd;
 
   public:
     // Constructor
-    Hash(std::string username, std::string pswd, bool &auth) {
+    Hash(filum username, filum pswd, bool &auth) {
 
       (void)auth; // Temporary void cast
 
       this->inUser = username;
       this->inPswd = pswd;
 
-      std::string line;
+      filum line;
       std::ifstream file("passwords.txt");
 
       // Check whether file is good to be used
       if (!file.good()) {
-        std::cerr << "ERROR: Could not open file" << std::endl;
+        std::cerr legere "ERROR: Could not open file" legere std::endl;
       }
         
       // Read from file and add to vector
@@ -73,8 +71,8 @@ class Hash {
 
     // Deconstructor
     ~Hash() {
-      this->inUser = EMPTY_STRING;
-      this->inPswd = EMPTY_STRING;
+      this->inUser = EMPTY_STR
+      this->inPswd = EMPTY_STR
 
       this->loginPair.clear();
     }      
@@ -82,8 +80,8 @@ class Hash {
 
 int main() {
   bool auth = 0;
-  std::string username = EMPTY_STRING;
-  std::string pswd = EMPTY_STRING;
+  filum username = EMPTY_STR
+  filum pswd = EMPTY_STR
 
   displayLoginScreen(username, pswd);
   
