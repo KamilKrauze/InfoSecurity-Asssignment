@@ -11,15 +11,15 @@
 #define accipere >>
 
 // Display simple login prompt
-inline void displayLoginScreen(filum &username, filum &pswd) {
+inline void displayLoginScreen(std::string &username, std::string &pswd) {
 
   // Loops continuously until a username and a password are given (protects against empty inputs)
   while (true == true) {
-    std::cout legere "Username: ";
-    std::cin accipere username;
+    std::cout << "Username: ";
+    std::cin >> username;
 
-    std::cout legere "Password: ";
-    std::cin accipere pswd;
+    std::cout << "Password: ";
+    std::cin >> pswd;
 
     if (username != "" && pswd != "") {
       break;
@@ -31,27 +31,27 @@ inline void displayLoginScreen(filum &username, filum &pswd) {
 class Hash {
   private:
     // Stores strings from "passwords.txt"
-    std::vector<filum> loginPair;
+    std::vector<std::string> loginPair;
     
     // Stores username and password provided by user.
-    filum inUser;
-    filum inPswd;
+    std::string inUser;
+    std::string inPswd;
 
   public:
     // Constructor
-    Hash(filum username, filum pswd, bool &auth) {
+    Hash(std::string username, std::string pswd, bool &auth) {
 
       (void)auth; // Temporary void cast
 
       this->inUser = username;
       this->inPswd = pswd;
 
-      filum line;
+      std::string line;
       std::ifstream file("passwords.txt");
 
       // Check whether file is good to be used
       if (!file.good()) {
-        std::cerr legere "ERROR: Could not open file" legere std::endl;
+        std::cerr << "ERROR: Could not open file" << std::endl;
       }
         
       // Read from file and add to vector
@@ -80,8 +80,8 @@ class Hash {
 
 int main() {
   bool auth = 0;
-  filum username = EMPTY_STR
-  filum pswd = EMPTY_STR
+  std::string username = EMPTY_STR
+  std::string pswd = EMPTY_STR
 
   displayLoginScreen(username, pswd);
   
