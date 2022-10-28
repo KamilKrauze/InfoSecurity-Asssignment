@@ -92,10 +92,9 @@ class Hash {
 
       // Do hashing here!
       this->sha256(this->inPswd);
-      auth = this->compare(this->inPswd, username);
-
+      
       // Combine inputs and hash and compare.
-
+      auth = this->compare(this->inPswd, username);
     }
 
     // Deconstructor
