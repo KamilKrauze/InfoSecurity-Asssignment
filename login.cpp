@@ -1,33 +1,18 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 
 #include "openssl/sha.h"
 #include "authlib.h"
 
 #define EMPTY_STR "";
-#define filum std::string
-#define legere <<
-#define accipere >>
 
-/** ---- TODO: -----
- * > Implement SSL hash into code
- * > Compare combined string to one stored in vector
- * > Set auth to correct Boolean value
- * 
- * > Avoid attempts system as we are not marked on it anyway
- * > Reasearch HEX Strings in C++ to potentially reduce ';' & ','
- * 
- *  ---- IDEA: -----
- * > Potentially make a hash table that works with the vector.
- * > Would end up with O(1) time for search and O(n) -> O(n^2) time for hash algorithm
- * 
- * JUMP: Line 78
- *
+/*
+Method to display login prompts
+Passes username and password by reference to modify
 */
-
-
-// Display simple login prompt
 inline void displayLoginScreen(std::string &username, std::string &pswd) {
 
   // Loops continuously until a username and a password are given (protects against empty inputs)
@@ -51,16 +36,43 @@ class Hash {
     std::vector<std::string> loginPair;
     
     // Stores username and password provided by user.
-    std::string inUser;
     std::string inPswd;
+
+    /**
+    Hash function. The following section of code from: https://stackoverflow.com/a/10632725
+    Passes password by reference to modify it
+    */
+    void sha256 (std:: string &pswd) {
+      unsigned char hash[SHA256_DIGEST_LENGTH]; //Creates array of unsigned char with the length of a SHA256 hash
+      SHA256_CTX sha256; // Creates variable of SHA256_CTX struct.
+      SHA256_Init(&sha256); //Calls function that takes Reference to SHA_256_CTX and returns an integer
+      SHA256_Update(&sha256, pswd.c_str(), pswd.size());
+      SHA256_Final(hash, &sha256);
+      
+      std::stringstream ss;
+      
+      for(int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+      }
+      
+      pswd = ss.str();
+    }
+
+    // Function to compare username and password entered by the user, to the contents of passwords.txt 
+    bool compare(std::string pswd, std::string user) 
+    {
+      std::string combinedLoginPair = user + ":" + pswd;
+      for (std::string item: this->loginPair)
+      {
+        if (item == combinedLoginPair) return true;
+      }
+      return false;
+    }
 
   public:
     // Constructor
-    Hash(std::string username, std::string pswd, bool &auth) {
-
-      (void)auth; // Temporary void cast
-
-      this->inUser = username;
+    Hash(std::string username, std::string &pswd, bool &auth) {
+      
       this->inPswd = pswd;
 
       std::string line;
@@ -79,15 +91,16 @@ class Hash {
       file.close();
 
       // Do hashing here!
+      this->sha256(this->inPswd);
+      auth = this->compare(this->inPswd, username);
 
+      // Combine inputs and hash and compare.
 
     }
 
     // Deconstructor
     ~Hash() {
-      this->inUser = EMPTY_STR
       this->inPswd = EMPTY_STR
-
       this->loginPair.clear();
     }      
 };
