@@ -61,10 +61,9 @@ class Hash {
     // Function to compare username and password entered by the user, to the contents of passwords.txt 
     bool compare(std::string pswd, std::string user) 
     {
-      std::string combinedLoginPair = user + ":" + pswd;
       for (std::string item: this->loginPair)
       {
-        if (item == combinedLoginPair) return true;
+        if (item == (user + ":" + pswd)) return true;
       }
       return false;
     }
