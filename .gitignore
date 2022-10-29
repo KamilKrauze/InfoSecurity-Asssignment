@@ -10,7 +10,7 @@
 *.lo
 *.o
 *.obj
-./login
+login
 
 # Precompiled Headers
 *.gch
@@ -35,4 +35,3 @@
 *.exe
 *.out
 *.app
-login
