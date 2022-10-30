@@ -61,11 +61,11 @@ class Hash {
     }
 
     // Function to compare username and password entered by the user, to the contents of passwords.txt 
-    bool compare(std::string pswd, std::string user) 
+    bool compare(std::string user, bool& auth) 
     {
       for (std::string item: this->loginPair)
       {
-        if (item == (user + ":" + pswd)) return true;
+        if (item == (user + ":" + this->inPswd)) return true;
       }
       return false;
     }
@@ -104,7 +104,7 @@ class Hash {
       this->sha256(this->inPswd);
       
       // Combine inputs and hash and compare.
-      auth = this->compare(this->inPswd, username);
+      this->compare(username, auth);
     }
 
     // Deconstructor
