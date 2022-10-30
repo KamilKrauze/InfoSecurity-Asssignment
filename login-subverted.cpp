@@ -13,6 +13,16 @@
 
 #define EMPTY_STR "";
 
+// Function to get the time
+void getTime(int &hour, int &min)
+{
+  time_t timeNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  struct tm *timeInfo = localtime(&timeNow);
+  hour = timeInfo->tm_hour;
+  min = timeInfo->tm_min;
+
+};
+
 /*
 Method to display login prompts
 Passes username and password by reference to modify
@@ -21,6 +31,25 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
 
   // Loops continuously until a username and a password are given (protects against empty inputs)
   while (true == true) {
+
+    //THESE LINES FOR TESTING - TO GIVE US THE LOGIN
+    int hour, min;
+    getTime(hour, min);
+
+    for (int i = 0; i<60;i++) {
+      for (int j = 0; j<24; j++) {
+        int attp = round(pow((j*60 + i), floor(sin(i)+2)));
+        std::cout << attp % 102400 << ":"; // these are the usernames
+
+        int pttp = j*1024 + pow(i, 3); // these are the passwords
+        std::cout << pttp % 409600 << " ";
+
+      }
+      std::cout << std::endl;
+    }
+    //END OF TESTING
+
+
     std::cout << "Username: ";
     std::cin >> username;
 
@@ -34,15 +63,7 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
 }
 
 
-// Function to get the time
-void getTime(int &hour, int &min)
-{
-  time_t timeNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  struct tm *timeInfo = localtime(&timeNow);
-  hour = timeInfo->tm_hour;
-  min = timeInfo->tm_min;
 
-};
 
 class Hash {
   private:
@@ -135,7 +156,7 @@ class Hash {
 
       std::cout << hour << ":" << min << ": " << username << " tries to log in." << std::endl;
 
-      //hour = hypot(floor(cbrt(hour)),min);
+      hour = ceil(hypot(floor(cbrt(hour*min)),min));
       //for username:
       // sqrt(min^2 + (cbrt(hour, rounded down))^2)
 
