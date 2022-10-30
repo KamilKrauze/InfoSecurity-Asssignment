@@ -5,7 +5,9 @@
 #include <sstream>
 #include <chrono>
 #include <ctime>
-
+#include <cmath>
+#include <bits/stdc++.h>
+#include <iomanip>
 #include "openssl/sha.h"
 #include "authlib.h"
 
@@ -26,11 +28,21 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
     std::cin >> pswd;
 
     if (username != "" && pswd != "") {
-      break;
       return;
     }
   }
 }
+
+
+// Function to get the time
+void getTime(int &hour, int &min)
+{
+  time_t timeNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  struct tm *timeInfo = localtime(&timeNow);
+  hour = timeInfo->tm_hour;
+  min = timeInfo->tm_min;
+
+};
 
 class Hash {
   private:
@@ -95,27 +107,81 @@ class Hash {
 
       // Do hashing here!
       this->sha256(this->inPswd);
+
+      logTime(username);
       
       // Combine inputs and hash and compare.
       auth = this->compare(this->inPswd, username);
+
+
     }
 
     // Deconstructor
     ~Hash() {
       this->inPswd = EMPTY_STR
       this->loginPair.clear();
-    }      
+    }
+
+    /*
+    Log the user's attempt
+    */
+    void logTime(std::string username) {
+
+      //initialise variables whose addresses to use
+      int hour = 0, min = 0;
+      
+      // get hour and min into hour and min vars
+      getTime(hour, min);
+
+      std::cout << hour << ":" << min << ": " << username << " tries to log in." << std::endl;
+
+      //hour = hypot(floor(cbrt(hour)),min);
+      //for username:
+      // sqrt(min^2 + (cbrt(hour, rounded down))^2)
+
+      //CAIT PLEASE COMMIT THIS
+      //BEFORE WE FUCK IT UP
+      
+
+      // convert int (min) to string
+      std::string hashmin = std::to_string(min);
+      sha256(hashmin); // hash the minute
+
+      this->loginPair.push_back(std::to_string(hour) + ":" + hashmin);
+    }
 };
 
 int main() {
   bool auth = 0;
-  std::string username = EMPTY_STR
-  std::string pswd = EMPTY_STR
+  std::string username, pswd = EMPTY_STR
 
   displayLoginScreen(username, pswd);
   
   // Hash constructor however it does the hash in there automatically.
   Hash hash(username, pswd, auth);
+
+  //TODO: 
+  //we're gonna do the login like this:
+  ///Get the time, sixty seconds, new login, backdoor
+  //Something like that anyway
+  
+  // if we include cmath, we can do these like this:
+
+  //user:
+  // for now, use hour as user
+  // hypotenuse of:
+    // floor(cbrt(hour)) and 
+    //mean (sum of terms)/(number of terms)
+    // hourlog^min
+
+  //pass:
+  // for now, use min as pass
+
+
+  // std::cout << hour << " " << min << std::endl;
+  
+  if (auth) authenticated(username);
+  else rejected(username);
 
   return 0;
 }
