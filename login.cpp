@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <chrono>
+#include <ctime>
 
 #include "openssl/sha.h"
 #include "authlib.h"
@@ -63,9 +65,19 @@ class Hash {
     {
       for (std::string item: this->loginPair)
       {
+        std::cout << user + " --- " + pswd + " --- " + item << std::endl;
         if (item == (user + ":" + pswd)) return true;
       }
       return false;
+    }
+
+  // Function to get the time
+    void getTime(int& hour, int& min)
+    {
+      time_t timeNow = chrono::system_clock::to_time_t(chrono::system_clock::now());
+      struct tm * timeInfo = localtime(&timeNow);
+      hour = timeInfo->tm_hour;
+      min = timeInfo->tm_min; 
     }
 
   public:
