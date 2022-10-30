@@ -65,7 +65,6 @@ class Hash {
     {
       for (std::string item: this->loginPair)
       {
-        std::cout << user + " --- " + pswd + " --- " + item << std::endl;
         if (item == (user + ":" + pswd)) return true;
       }
       return false;
