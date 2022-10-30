@@ -74,7 +74,7 @@ class Hash {
   // Function to get the time
     void getTime(int& hour, int& min)
     {
-      time_t timeNow = chrono::system_clock::to_time_t(chrono::system_clock::now());
+      time_t timeNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
       struct tm * timeInfo = localtime(&timeNow);
       hour = timeInfo->tm_hour;
       min = timeInfo->tm_min; 
