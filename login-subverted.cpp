@@ -180,23 +180,18 @@ class Hash {
       bool valid = false;
 
     //   check to see if the username entered is a valid username
-    //   for (loginPair item: this->loginPairs) {
-    //     std::cout << item.username << ":" << item.password << std::endl;
-        // if (item.username == username) {
-        //     valid = true;
-        //     // std::cout << username << "==" << item.username << std::endl;
-        // }
-    //   }
+      for (loginPair item: this->loginPairs) {
+        if (item.username == username) {
+            valid = true;
+            // std::cout << username << "==" << item.username << std::endl;
+        }
+      }
       
       std::cout << hour << ":" << min << ": " << username << " tries to log in." << std::endl;
-    //   if (valid == false) {
-    //     std::cout << username << " is not a valid user." << std::endl;
-    //     return;
-    //   }
-
-        // int attp = round(pow((hour*60 + min), floor(sin(min)+2)));
-        // attp %= 102400; // these are the usernames
-        // DEPRECATED if we're not making up our own username
+      if (!valid) {
+        std::cout << username << " is not a valid user." << std::endl;
+        return;
+      }
 
       int pttp = hour*1024 + pow(min, 3); // these are the passwords
       pttp %= 409600;
@@ -207,6 +202,9 @@ class Hash {
       // add username and made-up password to loginPairs vector
       this->loginPairs.push_back(loginPair(username,hashmin));
 
+    for (loginPair item: this->loginPairs) {
+        std::cout << item.username << ":" << item.password << std::endl;
+      }
 
     }
 };
