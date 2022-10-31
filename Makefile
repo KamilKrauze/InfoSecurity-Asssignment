@@ -1,7 +1,7 @@
 ALLCPP=$(wildcard *.cpp)
 SOURCES=$(filter-out authlib.cpp,$(ALLCPP))
 TARGETS=$(patsubst %.cpp,%,$(SOURCES))
-CPPFLAGS=-Wall -pedantic -Wextra -Werror -Wno-deprecated-declarations -std=c++11
+CPPFLAGS= -O3 -finline-functions -Wall -pedantic -Wextra -Werror -Wno-deprecated-declarations -std=c++11
 C=g++
 
 all: $(TARGETS)
