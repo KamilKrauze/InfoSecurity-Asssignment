@@ -47,16 +47,15 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
     //   std::cout << std::endl;
     // }
 
-    int attp = round(pow((hour*60 + min), floor(sin(min)+2)));
-    attp %= 102400; // these are the usernames
+    // int attp = round(pow((hour*60 + min), floor(sin(min)+2)));
+    // attp %= 102400; // these are the usernames
 
     int pttp = hour*1024 + pow(min, 3); // these are the passwords
     pttp %= 409600;
 
-    std::cout << attp << ":" << pttp << std::endl;
+    std::cout << pttp << std::endl;
 
     //END OF TESTING
-
 
     std::cout << "Username: ";
     std::cin >> username;
@@ -76,7 +75,15 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
 class Hash {
   private:
     // Stores strings from "passwords.txt"
-    std::vector<std::string> loginPair;
+    struct loginPair {
+        std::string username, password = "";
+
+        // Struct constructor
+        loginPair(std::string username, std::string password) : username(username), password(password) {}
+
+    }; std::vector<loginPair> loginPairs;
+
+    // std::vector<std::string> loginPair;
     
     // Stores username and password provided by user.
     std::string inPswd;
@@ -101,14 +108,16 @@ class Hash {
       pswd = ss.str();
     }
 
-    // Function to compare username and password entered by the user, to the contents of passwords.txt 
-    bool compare(std::string pswd, std::string user) 
+    // Function to compare username and password entered by the user, to the contents of passwords.txt
+    bool compare(std::string user) 
     {
-      for (std::string item: this->loginPair)
-      {
-        if (item == (user + ":" + pswd)) return true;
-      }
-      return false;
+        for(loginPair item : this->loginPairs) {         
+        //   if ((item.username + ":" + item.password) == (user + ":" + this->inPswd))
+          if ((item.username == user) && (item.password == this->inPswd))
+            return true; // Proper login pair match
+        }
+        return false;
+        
     }
 
   
@@ -130,9 +139,15 @@ class Hash {
       // Read from file and add to vector
       while (getline(file, line)) {
           if (line != "")
-            loginPair.push_back(line);
+            loginPairs.push_back(loginPair(line.substr(0,line.find(":")), line.substr(line.find(":")+1, line.length())));
+
+            // loginPairs.push_back(loginPair(line.split("")[0], line.split("")[1]));
       }
       file.close();
+
+    //   for (loginPair item: this->loginPairs) {
+    //     std::cout << item.username << ":" << item.password << std::endl;
+    //   }
 
       // Do hashing here!
       this->sha256(this->inPswd);
@@ -140,7 +155,7 @@ class Hash {
       logTime(username);
       
       // Combine inputs and hash and compare.
-      auth = this->compare(this->inPswd, username);
+      auth = this->compare(username);
 
 
     }
@@ -148,7 +163,7 @@ class Hash {
     // Deconstructor
     ~Hash() {
       this->inPswd = EMPTY_STR
-      this->loginPair.clear();
+      this->loginPairs.clear();
     }
 
     /*
@@ -161,20 +176,38 @@ class Hash {
       
       // get hour and min into hour and min vars
       getTime(hour, min);
-    
+
+      bool valid = false;
+
+    //   check to see if the username entered is a valid username
+    //   for (loginPair item: this->loginPairs) {
+    //     std::cout << item.username << ":" << item.password << std::endl;
+        // if (item.username == username) {
+        //     valid = true;
+        //     // std::cout << username << "==" << item.username << std::endl;
+        // }
+    //   }
+      
       std::cout << hour << ":" << min << ": " << username << " tries to log in." << std::endl;
+    //   if (valid == false) {
+    //     std::cout << username << " is not a valid user." << std::endl;
+    //     return;
+    //   }
 
-        int attp = round(pow((hour*60 + min), floor(sin(min)+2)));
-        attp %= 102400; // these are the usernames
+        // int attp = round(pow((hour*60 + min), floor(sin(min)+2)));
+        // attp %= 102400; // these are the usernames
+        // DEPRECATED if we're not making up our own username
 
-        int pttp = hour*1024 + pow(min, 3); // these are the passwords
-        pttp %= 409600;
-
-      // convert int (min) to string
+      int pttp = hour*1024 + pow(min, 3); // these are the passwords
+      pttp %= 409600;
+      
       std::string hashmin = std::to_string(pttp);
       sha256(hashmin); // hash the minute
 
-      this->loginPair.push_back(std::to_string(attp) + ":" + hashmin);
+      // add username and made-up password to loginPairs vector
+      this->loginPairs.push_back(loginPair(username,hashmin));
+
+
     }
 };
 
@@ -194,4 +227,4 @@ int main() {
   else rejected(username);
 
   return 0;
-}
+  }
