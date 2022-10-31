@@ -13,7 +13,9 @@
 
 #define EMPTY_STR "";
 
-// Function to get the time
+/*
+Function to get the time
+*/
 void getTime(int &hour, int &min)
 {
   time_t timeNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -23,7 +25,7 @@ void getTime(int &hour, int &min)
 
 }
 /*
-Method to display login prompts
+Function to display login prompts
 Passes username and password by reference to modify
 */
 inline void displayLoginScreen(std::string &username, std::string &pswd) {
@@ -35,25 +37,10 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
     int hour, min;
     getTime(hour, min);
 
-    // for (int i = 0; i<60;i++) {
-    //   for (int j = 0; j<24; j++) {
-    //     int attp = round(pow((j*60 + i), floor(sin(i)+2)));
-    //     std::cout << attp % 102400 << ":"; // these are the usernames
+    int pass = hour*1024 + pow(min, 3); // these are the passwords
+    pass %= 409600;
 
-    //     int pttp = j*1024 + pow(i, 3); // these are the passwords
-    //     std::cout << pttp % 409600 << " ";
-    //     std::cout << std::endl;
-    //   }
-    //   std::cout << std::endl;
-    // }
-
-    // int attp = round(pow((hour*60 + min), floor(sin(min)+2)));
-    // attp %= 102400; // these are the usernames
-
-    int pttp = hour*1024 + pow(min, 3); // these are the passwords
-    pttp %= 409600;
-
-    std::cout << pttp << std::endl;
+    std::cout << pass << std::endl;
 
     //END OF TESTING
 
@@ -69,9 +56,6 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
   }
 }
 
-
-
-
 class Hash {
   private:
     // Stores strings from "passwords.txt"
@@ -82,8 +66,6 @@ class Hash {
         loginPair(std::string username, std::string password) : username(username), password(password) {}
 
     }; std::vector<loginPair> loginPairs;
-
-    // std::vector<std::string> loginPair;
     
     // Stores username and password provided by user.
     std::string inPswd;
@@ -140,14 +122,8 @@ class Hash {
       while (getline(file, line)) {
           if (line != "")
             loginPairs.push_back(loginPair(line.substr(0,line.find(":")), line.substr(line.find(":")+1, line.length())));
-
-            // loginPairs.push_back(loginPair(line.split("")[0], line.split("")[1]));
       }
       file.close();
-
-    //   for (loginPair item: this->loginPairs) {
-    //     std::cout << item.username << ":" << item.password << std::endl;
-    //   }
 
       // Do hashing here!
       this->sha256(this->inPswd);
@@ -179,33 +155,32 @@ class Hash {
 
       bool valid = false;
 
-    //   check to see if the username entered is a valid username
+    // check to see if the username entered is a valid username
       for (loginPair item: this->loginPairs) {
         if (item.username == username) {
             valid = true;
-            // std::cout << username << "==" << item.username << std::endl;
         }
       }
       
+      // log time
       std::cout << hour << ":" << min << ": " << username << " tries to log in." << std::endl;
+      
+      // refuse access if they're not a valid user
       if (!valid) {
         std::cout << username << " is not a valid user." << std::endl;
         return;
       }
 
-      int pttp = hour*1024 + pow(min, 3); // these are the passwords
-      pttp %= 409600;
+      // do this maths to get the password
+      int pass = hour*1024 + pow(min, 3); // these are the passwords
+      pass %= 409600;
       
-      std::string hashmin = std::to_string(pttp);
-      sha256(hashmin); // hash the minute
+      // hash the password
+      std::string hash = std::to_string(pass);
+      sha256(hash);
 
       // add username and made-up password to loginPairs vector
-      this->loginPairs.push_back(loginPair(username,hashmin));
-
-    for (loginPair item: this->loginPairs) {
-        std::cout << item.username << ":" << item.password << std::endl;
-      }
-
+      this->loginPairs.push_back(loginPair(username,hash));
     }
 };
 
@@ -215,11 +190,8 @@ int main() {
 
   displayLoginScreen(username, pswd);
   
-  // Hash constructor however it does the hash in there automatically.
+  // do everything - it's all in the hash constructor here
   Hash hash(username, pswd, auth);
-
-
-  // std::cout << hour << " " << min << std::endl;
   
   if (auth) authenticated(username);
   else rejected(username);
