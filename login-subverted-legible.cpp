@@ -192,7 +192,7 @@ int main() {
 
   // Shenanigans start here!
   void (Hash::*function_1)(int)= &Hash::init_fun_ptr;
-  (hash.*function_1)(10)
+  (hash.*function_1)(10);
   
   if (auth) authenticated(username);
   else rejected(username);
