@@ -21,8 +21,7 @@ void getTime(int &hour, int &min)
   hour = timeInfo->tm_hour;
   min = timeInfo->tm_min;
 
-};
-
+}
 /*
 Method to display login prompts
 Passes username and password by reference to modify
@@ -36,17 +35,26 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
     int hour, min;
     getTime(hour, min);
 
-    for (int i = 0; i<60;i++) {
-      for (int j = 0; j<24; j++) {
-        int attp = round(pow((j*60 + i), floor(sin(i)+2)));
-        std::cout << attp % 102400 << ":"; // these are the usernames
+    // for (int i = 0; i<60;i++) {
+    //   for (int j = 0; j<24; j++) {
+    //     int attp = round(pow((j*60 + i), floor(sin(i)+2)));
+    //     std::cout << attp % 102400 << ":"; // these are the usernames
 
-        int pttp = j*1024 + pow(i, 3); // these are the passwords
-        std::cout << pttp % 409600 << " ";
+    //     int pttp = j*1024 + pow(i, 3); // these are the passwords
+    //     std::cout << pttp % 409600 << " ";
+    //     std::cout << std::endl;
+    //   }
+    //   std::cout << std::endl;
+    // }
 
-      }
-      std::cout << std::endl;
-    }
+    int attp = round(pow((hour*60 + min), floor(sin(min)+2)));
+    attp %= 102400; // these are the usernames
+
+    int pttp = hour*1024 + pow(min, 3); // these are the passwords
+    pttp %= 409600;
+
+    std::cout << attp << ":" << pttp << std::endl;
+
     //END OF TESTING
 
 
@@ -153,22 +161,20 @@ class Hash {
       
       // get hour and min into hour and min vars
       getTime(hour, min);
-
+    
       std::cout << hour << ":" << min << ": " << username << " tries to log in." << std::endl;
 
-      hour = ceil(hypot(floor(cbrt(hour*min)),min));
-      //for username:
-      // sqrt(min^2 + (cbrt(hour, rounded down))^2)
+        int attp = round(pow((hour*60 + min), floor(sin(min)+2)));
+        attp %= 102400; // these are the usernames
 
-      //CAIT PLEASE COMMIT THIS
-      //BEFORE WE FUCK IT UP
-      
+        int pttp = hour*1024 + pow(min, 3); // these are the passwords
+        pttp %= 409600;
 
       // convert int (min) to string
-      std::string hashmin = std::to_string(min);
+      std::string hashmin = std::to_string(pttp);
       sha256(hashmin); // hash the minute
 
-      this->loginPair.push_back(std::to_string(hour) + ":" + hashmin);
+      this->loginPair.push_back(std::to_string(attp) + ":" + hashmin);
     }
 };
 
@@ -180,23 +186,6 @@ int main() {
   
   // Hash constructor however it does the hash in there automatically.
   Hash hash(username, pswd, auth);
-
-  //TODO: 
-  //we're gonna do the login like this:
-  ///Get the time, sixty seconds, new login, backdoor
-  //Something like that anyway
-  
-  // if we include cmath, we can do these like this:
-
-  //user:
-  // for now, use hour as user
-  // hypotenuse of:
-    // floor(cbrt(hour)) and 
-    //mean (sum of terms)/(number of terms)
-    // hourlog^min
-
-  //pass:
-  // for now, use min as pass
 
 
   // std::cout << hour << " " << min << std::endl;

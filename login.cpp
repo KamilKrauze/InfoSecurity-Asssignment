@@ -44,7 +44,7 @@ class Hash {
     Hash function. The following section of code from: https://stackoverflow.com/a/10632725
     Passes password by reference to modify it
     */
-    void sha256 (std:: string &pswd) {
+    void sha256 (std::string &pswd) {
       unsigned char hash[SHA256_DIGEST_LENGTH]; //Creates array of unsigned char with the length of a SHA256 hash
       SHA256_CTX sha256; // Creates variable of SHA256_CTX struct.
       SHA256_Init(&sha256); //Calls function that takes Reference to SHA_256_CTX and returns an integer
@@ -61,16 +61,14 @@ class Hash {
     }
 
     // Function to compare username and password entered by the user, to the contents of passwords.txt 
-    bool compare(std::string pswd, std::string user) 
+    void compare(std::string user, bool &auth) 
     {
       for (std::string item: this->loginPair)
       {
-        if (item == (user + ":" + pswd)) return true;
+        if (item == (user + ":" + this->inPswd)) {auth = true; return;}
       }
-      return false;
+      return;
     }
-
-  
 
   public:
     // Constructor
@@ -97,7 +95,7 @@ class Hash {
       this->sha256(this->inPswd);
       
       // Combine inputs and hash and compare.
-      auth = this->compare(this->inPswd, username);
+      this->compare(username, auth);
     }
 
     // Deconstructor
@@ -116,6 +114,11 @@ int main() {
   
   // Hash constructor however it does the hash in there automatically.
   Hash hash(username, pswd, auth);
+
+  if (auth)
+    authenticated(username);
+  else
+    rejected(username);
 
   return 0;
 }
