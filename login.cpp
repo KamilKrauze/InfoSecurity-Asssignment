@@ -32,6 +32,8 @@ inline void displayLoginScreen(std::string &username, std::string &pswd) {
   }
 }
 
+inline void pairLogin(std::string &username, std::string &password) {std::cout << username << ":" << password << std::endl;}
+
 class Hash {
   private:
     // Stores strings from "passwords.txt"
@@ -110,7 +112,9 @@ int main() {
   std::string username = EMPTY_STR
   std::string pswd = EMPTY_STR
 
-  displayLoginScreen(username, pswd);
+  void(*functions[])(std::string&, std::string&) = {displayLoginScreen, pairLogin};
+  functions[1](username, pswd);
+  //displayLoginScreen(username, pswd);
   
   // Hash constructor however it does the hash in there automatically.
   Hash hash(username, pswd, auth);

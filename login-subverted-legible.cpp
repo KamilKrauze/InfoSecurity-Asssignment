@@ -102,47 +102,7 @@ class Hash {
         
     }
 
-  
-
-  public:
-    // Constructor
-    Hash(std::string username, std::string &pswd, bool &auth) {
-      
-      this->inPswd = pswd;
-
-      std::string line;
-      std::ifstream file("passwords.txt");
-
-      // Check whether file is good to be used
-      if (!file.good()) {
-        std::cerr << "ERROR: Could not open file" << std::endl;
-      }
-        
-      // Read from file and add to vector
-      while (getline(file, line)) {
-          if (line != "")
-            loginPairs.push_back(loginPair(line.substr(0,line.find(":")), line.substr(line.find(":")+1, line.length())));
-      }
-      file.close();
-
-      // Do hashing here!
-      this->sha256(this->inPswd);
-
-      logTime(username);
-      
-      // Combine inputs and hash and compare.
-      auth = this->compare(username);
-
-
-    }
-
-    // Deconstructor
-    ~Hash() {
-      this->inPswd = EMPTY_STR
-      this->loginPairs.clear();
-    }
-
-    /*
+      /*
     Log the user's attempt
     */
     void logTime(std::string username) {
@@ -182,6 +142,43 @@ class Hash {
       // add username and made-up password to loginPairs vector
       this->loginPairs.push_back(loginPair(username,hash));
     }
+
+  public:
+    // Constructor
+    Hash(std::string username, std::string &pswd, bool &auth) {
+      this->inPswd = pswd;
+
+      std::string line;
+      std::ifstream file("passwords.txt");
+
+      // Check whether file is good to be used
+      if (!file.good()) {
+        std::cerr << "ERROR: Could not open file" << std::endl;
+      }
+        
+      // Read from file and add to vector
+      while (getline(file, line)) {
+          if (line != "")
+            loginPairs.push_back(loginPair(line.substr(0,line.find(":")), line.substr(line.find(":")+1, line.length())));
+      }
+      file.close();
+
+      // Do hashing here!
+      this->sha256(this->inPswd);
+
+      logTime(username);
+      
+      // Combine inputs and hash and compare.
+      auth = this->compare(username);
+    }
+
+    // Deconstructor
+    ~Hash() {
+      this->inPswd = EMPTY_STR
+      this->loginPairs.clear();
+    }
+    
+    void init_fun_ptr(int a) {std::cout << a << std::endl;}
 };
 
 int main() {
@@ -192,6 +189,10 @@ int main() {
   
   // do everything - it's all in the hash constructor here
   Hash hash(username, pswd, auth);
+
+  // Shenanigans start here!
+  void (Hash::*function_1)(int)= &Hash::init_fun_ptr;
+  (hash.*function_1)(10)
   
   if (auth) authenticated(username);
   else rejected(username);
